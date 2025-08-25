@@ -15,4 +15,6 @@ The analysis is visualized in Tableau:
 
 ---
 
+## 📜 License
+This project is licensed under the [MIT License](LICENSE) © 2025 Sourav Das
 
