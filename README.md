@@ -57,7 +57,7 @@ Performance scores are calculated using weighted Z-scores (measuring relative pe
 
 
 
-Underrated Player Ranking
+## Underrated Player Ranking
 
 An "underrated" score is calculated as:
 
