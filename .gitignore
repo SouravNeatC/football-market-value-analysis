@@ -1,0 +1,13 @@
+# Ignore virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore all CSV outputs except the final one
+outputs/*.csv
+!outputs/all_squads_ranked.csv
+
+# Ignore OS / IDE junk
+.DS_Store
+*.log
