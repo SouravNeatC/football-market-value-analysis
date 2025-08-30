@@ -11,9 +11,7 @@ import pandas as pd
 import time, re, os
 from collections import defaultdict
 
-# ====== CONFIG ======
 CLUBS = {
-    # Fill these with the exact FBref URLs for each club's "All Competitions" standard stats page (2024-2025)
     "Barcelona": "https://fbref.com/en/squads/206d90db/2024-2025/all_comps/Barcelona-Stats-All-Competitions",
     "Real Madrid": "https://fbref.com/en/squads/53a2f082/2024-2025/all_comps/Real-Madrid-Stats-All-Competitions",
     "Liverpool": "https://fbref.com/en/squads/822bd0ba/2024-2025/all_comps/Liverpool-Stats-All-Competitions",
@@ -23,15 +21,15 @@ CLUBS = {
 OUTPUT_DIR = "outputs"
 CHROMEDRIVER_PATH = r"C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
 
-# ====== SELENIUM SETUP ======
+
 opts = Options()
-# opts.add_argument("--headless=new")  # optional headless
+
 opts.add_argument("--log-level=3")
 opts.add_experimental_option("excludeSwitches", ["enable-logging", "enable-automation"])
 opts.add_experimental_option("prefs", {"profile.default_content_setting_values.notifications": 2})
 service = Service(executable_path=CHROMEDRIVER_PATH)
 
-# ====== HELPERS ======
+
 def find_table_from_page_source(html, table_id):
     """Return <table> either directly or from FBref's comment wrapper."""
     soup = BeautifulSoup(html, "lxml")
@@ -66,7 +64,7 @@ def _norm_label(s: str) -> str:
     s = s.lower().replace("–", "-").replace("’", "'").replace("per 90", "").replace("%", " percent")
     return re.sub(r"[^a-z0-9]+", "", s)
 
-# desired labels for each role (normalized synonyms) → output column
+
 DEFENDER_LABELS = {
     "df_progressive_passes_rec_90": {"progressivepassesrec", "progressivepassesreceived"},
     "df_tackles_90": {"tackles"},
@@ -142,12 +140,12 @@ def maybe_to_numeric(s: pd.Series) -> pd.Series:
 def slugify(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
-# ====== CORE SCRAPER ======
+
 def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -> pd.DataFrame:
     base_url = "https://fbref.com"
     driver.get(club_url)
 
-    # Accept cookies (best-effort)
+
     try:
         consent = WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((
@@ -161,7 +159,7 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
     except Exception:
         pass
 
-    # Wait for main table or wrapper
+
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located(
             (By.XPATH, "//*[@id='stats_standard_combined' or @id='all_stats_standard_combined']")
@@ -171,7 +169,7 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
     if table is None:
         raise RuntimeError(f"Could not locate the 'stats_standard_combined' table for {club_name}.")
 
-    # Build headers
+
     thead_rows = table.find("thead").find_all("tr")
     header_cells = thead_rows[-1].find_all(["th", "td"])
     headers = [hc.get_text(strip=True) for hc in header_cells]
@@ -209,7 +207,7 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
         if not first:
             continue
 
-        # Main row data
+
         player_link_tag = first.find("a", href=True)
         player_name = first.get_text(strip=True)
         player_url = base_url + player_link_tag["href"] if player_link_tag else ""
@@ -222,7 +220,7 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
             cells += [""] * (len(uniq_headers) - len(cells))
         rows.append(cells[:len(uniq_headers)])
 
-        # Profile scrape (achievements + role stats)
+
         trophies = []
         role_data = {k: "" for k in extra_cols}
 
@@ -258,21 +256,19 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
 
         time.sleep(0.25)
 
-    # Build DataFrame for club
     df = pd.DataFrame(rows, columns=uniq_headers)
     df["achievements"] = achievements_list
     for k, v in extra_cols.items():
         df[k] = v
 
-    # Tidy/convert like your original logic
+ 
     df.columns = [c.strip().replace(" ", "_").lower() for c in df.columns]
     df = df.apply(maybe_to_numeric)
 
-    # Drop unwanted base cols (if present)
+ 
     drop_cols = ["pos", "starts", "matches"]
     df = df.drop(columns=[c for c in drop_cols if c in df.columns])
 
-    # Readability renames (unchanged from your script)
     rename_map = {
         "90s": "90s Played",
         "crdy": "Yellow Cards",
@@ -296,7 +292,6 @@ def scrape_fbref_club(driver: webdriver.Chrome, club_name: str, club_url: str) -
 
     return df
 
-# ====== RUN FOR ALL CLUBS ======
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     driver = webdriver.Chrome(service=service, options=opts)

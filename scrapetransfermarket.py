@@ -11,7 +11,7 @@ import pandas as pd
 import time, subprocess, os
 from pathlib import Path
 
-# ===== CONFIG =====
+
 CHROMEDRIVER_PATH = r"C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
 
 CLUBS = [
@@ -47,7 +47,7 @@ CLUBS = [
     },
 ]
 
-# === Resolve project root so outputs land in WEBSCRAPING\outputs ===
+
 def resolve_project_root() -> Path:
     p = Path(__file__).resolve().parent
     # climb out of venv/Scripts if the script lives there
@@ -58,7 +58,7 @@ def resolve_project_root() -> Path:
 PROJECT_ROOT = resolve_project_root()
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
 
-# ==================
+
 
 def make_driver():
     opts = Options()
@@ -93,7 +93,7 @@ def accept_popup(driver):
         print("No popup found.")
 
 def scrape_table(driver, club_name: str, league_name: str) -> pd.DataFrame:
-    # identical scraping format as your original Barcelona script
+ 
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.items")))
     rows = driver.find_elements(By.CSS_SELECTOR, "table.items tbody tr.odd, table.items tbody tr.even")
 
@@ -101,12 +101,12 @@ def scrape_table(driver, club_name: str, league_name: str) -> pd.DataFrame:
     for row in rows:
         tds = row.find_elements(By.TAG_NAME, "td")
 
-        # Player + Position
+
         player_lines = [line.strip() for line in tds[1].text.split("\n") if line.strip()]
         player = player_lines[0] if player_lines else ""
         position = player_lines[1] if len(player_lines) > 1 else ""
 
-        # Date of birth / Age, Height, Foot, Market value
+
         dob_age = tds[5].text.strip()
         height = tds[8].text.strip()
         foot = tds[9].text.strip()
