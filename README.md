@@ -75,6 +75,23 @@ Their market value is available and greater than zero.
 Their age is under 30.
 They have a clearly identified role (FWD, MF, DF, GK).
 
+
+## Key Findings
+
+- Domestic vs Foreign Players: Clubs lean more toward domestic players rather than foreign players(English, Spanish and French respectively), like the English clubs : Liverpool and Arsenal have more English player compared to SPpanish clubs and French club.
+
+- Age strongly influences market value: Market value peaks between the ages of 23 and 26, after which it declines steadily. Very young players (16–18) also tend to have lower values, reflecting limited experience.
+
+- Position and market value are correlated: On average, forwards hold the highest market value, followed by midfielders and defenders, with goalkeepers typically valued the lowest.
+
+- Fairness and defenders’ valuation: Defenders fairness do not affect their respective market value much. Also highly consistent and reliable defenders (e.g., Van Dijk, Saliba, Hakimi) do not reach the same market value levels as star forwards, showing a positional undervaluation bias in the transfer market.
+
+- Goal contribution drives market value: A strong positive relationship exists between a player’s combined goals and assists (G+A) and their average market value, reinforcing attacking output as the most rewarded metric.
+
+- Market inefficiencies: Some defenders and goalkeepers demonstrate excellent performance metrics but are comparatively undervalued, suggesting opportunities for identifying “underrated” players.
+
+
+
 The analysis is visualized in Tableau and can be accessed from the below link:  
 [Tableau Dashboard](https://public.tableau.com/app/profile/sourav.das3794/viz/FootballMarketValueAnalysis/Intro)
 
